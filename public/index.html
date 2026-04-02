@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clínica OdontoCare - Chatbot</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="chat-window">
+            <div class="chat-header">
+                <div class="header-content">
+                    <div class="avatar">
+                        <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                            <circle cx="20" cy="20" r="20" fill="white"/>
+                            <path d="M20 8C15.58 8 12 11.58 12 16C12 20.42 15.58 24 20 24C24.42 24 28 20.42 28 16C28 11.58 24.42 8 20 8Z" fill="#4CAF50"/>
+                            <path d="M20 26C14.48 26 8 28.69 8 32V34H32V32C32 28.69 25.52 26 20 26Z" fill="#4CAF50"/>
+                        </svg>
+                    </div>
+                    <div class="header-info">
+                        <h2>Clínica OdontoCare</h2>
+                        <p>Online • Responde em minutos</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot-message">
+                    <div class="message-content">
+                        Olá! 👋 Bem-vindo(a) à Clínica OdontoCare!<br>
+                        Sou assistente virtual da clínica. Como posso ajudar você hoje?<br><br>
+                        💡 Posso informar:<br>
+                        • Preços de procedimentos<br>
+                        • Agendamentos<br>
+                        • Horários e endereço<br>
+                        • Convênios atendidos<br>
+                        • Urgências odontológicas
+                    </div>
+                    <div class="message-time">Agora</div>
+                </div>
+            </div>
+            
+            <div class="chat-input-area">
+                <div class="input-container">
+                    <input type="text" id="messageInput" placeholder="Digite sua mensagem..." autocomplete="off">
+                    <button id="sendButton" class="send-button">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M2 21L23 12L2 3V10L17 12L2 14V21Z" fill="white"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="typing-indicator" id="typingIndicator" style="display: none;">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
