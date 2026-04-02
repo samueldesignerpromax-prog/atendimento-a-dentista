@@ -6,7 +6,8 @@ class Chatbot {
         this.typingIndicator = document.getElementById('typingIndicator');
         this.contexto = {
             fluxoAtivo: null,
-            dadosAgendamento: {}
+            dadosAgendamento: {},
+            ultimaPergunta: null
         };
         
         this.init();
@@ -17,6 +18,9 @@ class Chatbot {
         this.messageInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') this.sendMessage();
         });
+        
+        // Foco no input ao carregar
+        this.messageInput.focus();
     }
     
     async sendMessage() {
@@ -26,6 +30,9 @@ class Chatbot {
         // Adicionar mensagem do usuário
         this.addMessage(mensagem, 'user');
         this.messageInput.value = '';
+        
+        // Salvar última pergunta para contexto
+        this.contexto.ultimaPergunta = mensagem;
         
         // Mostrar indicador de digitação
         this.showTypingIndicator();
@@ -49,15 +56,13 @@ class Chatbot {
             
             // Atualizar contexto
             this.contexto.fluxoAtivo = data.fluxoAtivo;
+            if (data.dadosAgendamento) {
+                this.contexto.dadosAgendamento = data.dadosAgendamento;
+            }
             
-            // Se for fluxo de agendamento, salvar dados
-            if (this.contexto.fluxoAtivo === 'aguardando_nome') {
-                this.contexto.dadosAgendamento.nome = mensagem;
-            } else if (this.contexto.fluxoAtivo === 'aguardando_telefone') {
-                this.contexto.dadosAgendamento.telefone = mensagem;
-            } else if (this.contexto.fluxoAtivo === 'aguardando_horario') {
-                this.contexto.dadosAgendamento.horario = mensagem;
-                // Salvar agendamento
+            // Se o fluxo foi finalizado, salvar agendamento
+            if (this.contexto.fluxoAtivo === 'finalizado' || 
+                (this.contexto.fluxoAtivo === null && this.contexto.dadosAgendamento.nome)) {
                 await this.salvarAgendamento();
                 this.contexto.dadosAgendamento = {};
             }
@@ -66,10 +71,13 @@ class Chatbot {
             this.hideTypingIndicator();
             this.addMessage(data.resposta, 'bot');
             
+            // Scroll para a última mensagem
+            this.scrollToBottom();
+            
         } catch (error) {
             console.error('Erro:', error);
             this.hideTypingIndicator();
-            this.addMessage('Desculpe, tivemos um problema técnico. Por favor, tente novamente.', 'bot');
+            this.addMessage('Desculpe, tivemos um problema técnico. Por favor, tente novamente. 😊', 'bot');
         }
     }
     
@@ -84,7 +92,8 @@ class Chatbot {
             });
             
             if (response.ok) {
-                console.log('Agendamento salvo com sucesso');
+                const data = await response.json();
+                console.log('Agendamento salvo:', data);
             }
         } catch (error) {
             console.error('Erro ao salvar agendamento:', error);
@@ -97,7 +106,10 @@ class Chatbot {
         
         const messageContent = document.createElement('div');
         messageContent.className = 'message-content';
-        messageContent.innerHTML = this.formatMessage(text);
+        
+        // Processar texto com quebras de linha
+        const textWithBreaks = text.replace(/\n/g, '<br>');
+        messageContent.innerHTML = textWithBreaks;
         
         const messageTime = document.createElement('div');
         messageTime.className = 'message-time';
@@ -108,11 +120,6 @@ class Chatbot {
         
         this.messagesContainer.appendChild(messageDiv);
         this.scrollToBottom();
-    }
-    
-    formatMessage(text) {
-        // Converter quebras de linha em <br>
-        return text.replace(/\n/g, '<br>');
     }
     
     getCurrentTime() {
@@ -130,7 +137,9 @@ class Chatbot {
     }
     
     scrollToBottom() {
-        this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
+        setTimeout(() => {
+            this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
+        }, 100);
     }
 }
 
